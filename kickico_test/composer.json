@@ -1,0 +1,19 @@
+{
+    "name": "webbash/kickico_test",
+    "description": "Test task for company Kickico",
+    "authors": [
+        {
+            "name": "Denis",
+            "email": "denis.lukhmanov@mail.ru"
+        }
+    ],
+    "version": "1.0.0",
+    "require": {
+        "guzzlehttp/guzzle": "6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Webbash\\Kickico\\Client\\": ""
+        }
+    }
+}
