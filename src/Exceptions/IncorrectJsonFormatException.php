@@ -14,27 +14,27 @@ class IncorrectJsonFormatException extends Exception
     /**
      * @var string
      */
-    private $response;
+    private $json;
 
     /**
      * IncorrectJsonFormatException constructor.
-     * @param string $response
+     * @param string $json
      * @param string $message
      * @param int $code
      * @param Throwable|null $previous
      */
-    public function __construct(string $response = "", $message = "", $code = 0, Throwable $previous = null)
+    public function __construct(string $json = "", $message = "", $code = 0, Throwable $previous = null)
     {
         parent::__construct($message, $code, $previous);
 
-        $this->response = $response;
+        $this->json = $json;
     }
 
     /**
      * @return string
      */
-    public function getResponse()
+    public function getJson()
     {
-        return $this->response;
+        return $this->json;
     }
 }
