@@ -2,8 +2,12 @@
 
 namespace Webbash\Kickico\Client;
 
+use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client as GuzzleClient;
-use GuzzleHttp\Exception\RequestException;
+use Webbash\Kickico\Client\DTO\Response;
+use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\ConnectException;
+use Webbash\Kickico\Client\Exceptions\IncorrectJsonFormatException;
 
 /**
  * Class Client
@@ -11,11 +15,6 @@ use GuzzleHttp\Exception\RequestException;
  */
 class Client
 {
-    /**
-     * @var array
-     */
-    protected $config;
-
     /**
      * @var GuzzleClient
      */
@@ -27,22 +26,54 @@ class Client
      */
     public function __construct(array $config)
     {
-        $this->config = $config;
-
-        $this->client = new GuzzleClient($this->config['client_settings']);
+        $this->client = new GuzzleClient($config);
     }
 
     /**
+     * Send request to Kickico Client.
+     *
      * @param string $uri
      * @param string $method
      * @param array $options
+     * @return array|bool
      */
-    public function request(string $uri, string $method, array $options = [])
+    public function sendRequest(string $uri, string $method, array $options = [])
     {
         try {
-            $request = $this->client->request($method, $uri, $options);
-        } catch (RequestException $e) {
-            // TODO Обработать ошибку
+            $response = $this->client->request($method, $uri, $options);
+
+            $response = Response::fromResponse($response);
+
+            return $response->toArray();
+        } catch (IncorrectJsonFormatException $e) {
+            Log::error('Incorrect format JSON in kickico client', [
+                'response' => $e->getResponse(),
+            ]);
+
+            return false;
+        } catch (ConnectException $e) {
+            Log::error("Cannot connect to kickico client - {$e->getMessage()}");
+
+            return false;
+        } catch (ServerException $e) {
+            $response = $e->getResponse();
+
+            try {
+                $response = Response::fromResponse($response);
+            } catch (IncorrectJsonFormatException $e) {
+                Log::error('Incorrect format JSON in kickico client', [
+                    'response' => $e->getResponse(),
+                ]);
+
+                return false;
+            }
+
+            Log::error("Error on kickico client - {$e->getMessage()}", [
+                'message' => $response->data['message'],
+                'code' => $response->data['code'],
+            ]);
+
+            return false;
         }
     }
 }

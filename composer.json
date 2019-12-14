@@ -9,11 +9,25 @@
     ],
     "version": "1.0.0",
     "require": {
-        "guzzlehttp/guzzle": "6.5"
+        "guzzlehttp/guzzle": "6.5",
+        "spatie/data-transfer-object": "^1.11"
     },
     "autoload": {
         "psr-4": {
             "Webbash\\Kickico\\Client\\": "src/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webbash\\Kickico\\Client\\KickicoClientServiceProvider"
+            ],
+            "aliases": {
+                "KickicoClient": "Webbash\\Kickico\\Client\\Facades\\Client"
+            }
         }
     }
 }
