@@ -47,7 +47,7 @@ class Client
             return $response->toArray();
         } catch (IncorrectJsonFormatException $e) {
             Log::error('Incorrect format JSON in kickico client', [
-                'response' => $e->getResponse(),
+                'json' => $e->getJson(),
             ]);
 
             return false;
@@ -62,7 +62,7 @@ class Client
                 $response = Response::fromResponse($response);
             } catch (IncorrectJsonFormatException $e) {
                 Log::error('Incorrect format JSON in kickico client', [
-                    'response' => $e->getResponse(),
+                    'json' => $e->getJson(),
                 ]);
 
                 return false;
